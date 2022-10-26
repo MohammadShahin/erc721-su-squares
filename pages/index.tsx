@@ -3,19 +3,21 @@ import React from 'react'
 import styles from '../styles/Home.module.css'
 import { useAccount, useConnect, useDisconnect, useContract, useSigner } from 'wagmi'
 // import { calculatorAbi } from '../src/abi'
-import { useToast, Button, Input, Text, Flex, Box, Heading, NumberInput, NumberInputField } from '@chakra-ui/react'
+import { useToast, Button, Input, Text, Flex, Box, Heading, NumberInput, NumberInputField, Drawer, DrawerContent, DrawerHeader, DrawerBody, useColorMode } from '@chakra-ui/react'
 import { abi, address as contractAddress } from '../src/constants'
 import { NFTGrid } from '../src/components'
+import { SquareNFT } from '../src/types'
+import NftView from '../src/components/NftView'
+import { formatString } from '../src/utils'
 
-const maxChar = 50;
-const GRID_HEIGHT = 20
-const GRID_WIDTH = 50
-
+const GRID_HEIGHT = 25;
+const GRID_WIDTH = 40;
 
 export default function Home() {
 
   // Wagmi
-  const { address, isConnected } = useAccount()
+  // const { address, isConnected } = useAccount()
+  const { address, isConnected } = { isConnected: true, address: 'x' }
   const { data: signer } = useSigner()
   const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
@@ -24,20 +26,23 @@ export default function Home() {
   const contract = useContract({ address: contractAddress, abi, signerOrProvider: signer })
   const [contractName, setContractName] = React.useState<string>()
   const [contractSymbol, setContractSymbol] = React.useState<string>()
-  const [cells, setCells] = React.useState<string[][]>([[]])
+  const [cells, setCells] = React.useState<SquareNFT[][]>([[]])
+
+  // ui
+  const { toggleColorMode } = useColorMode()
+  const [selectedCell, setSelectedCell] = React.useState<SquareNFT>()
+  const toast = useToast()
 
   React.useEffect(() => {
     // Getting from the contract.
-    const newCells = Array(1000).map(() => "")
-
+    const newCells = Array(1000).fill('').map((_e, ind) => ({
+      tokenId: ind
+    }) as SquareNFT)
 
     const newCellsReshaped = []
-    while(newCells.length) newCellsReshaped.push(newCells.splice(0, GRID_WIDTH));
+    while (newCells.length) newCellsReshaped.push(newCells.splice(0, GRID_WIDTH));
     setCells(newCellsReshaped)
   }, [])
-
-  // UI
-  const toast = useToast()
 
   React.useEffect(() => {
     const updateContractDetails = async () => {
@@ -55,12 +60,47 @@ export default function Home() {
     updateContractDetails()
   }, [contract, isConnected])
 
-
   React.useEffect(() => {
+    toggleColorMode()
     disconnect()
   }, [])
 
-  const handleOnClickCell = (posX: number, posY: number) => {
+  const handleOnClickCell = (cell: SquareNFT) => {
+    setSelectedCell(cell)
+  }
+
+  const buyNft = async (nft: SquareNFT, title: string, image: string) => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject("foo");
+        }, 300);
+      })
+      await promise
+      toast({
+        title: `NFT bought!`,
+        description: `You've successfully purchased the NFT number ${nft.tokenId}.`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+    catch (e) {
+      let result = 'unknow';
+      if (typeof e === "string") {
+        result = e 
+      } else if (e instanceof Error) {
+        result = e.message 
+      }
+      toast({
+        title: `NFT purchase failed!`,
+        description: `You couldn't purchased the NFT number ${nft.tokenId}. ${formatString(result)}.`,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+
 
   }
 
@@ -81,7 +121,7 @@ export default function Home() {
             </Heading>
 
             <Heading mt='10'>
-              The address of the contract is <span className={styles.blue}>{address}</span>
+              The address of the contract is <span className={styles.blue}>{contractAddress}</span>
             </Heading>
 
             <Text mt='10'>
@@ -94,8 +134,11 @@ export default function Home() {
             <Heading mt='10' mb="10">
               Your address: <span className={styles.blue}>{address}</span>
             </Heading>
+            <Flex flexDir={'row'} w='100%' gap={3} >
+              <NFTGrid w='80%' onClickCell={handleOnClickCell} cells={cells} selected={selectedCell} />
 
-            <NFTGrid height={GRID_HEIGHT} width={GRID_WIDTH} onClickCell={handleOnClickCell} cells={cells} />
+              <NftView w='20%' nftMetadata={selectedCell} buyNft={buyNft} />
+            </Flex>
 
           </React.Fragment>
           :

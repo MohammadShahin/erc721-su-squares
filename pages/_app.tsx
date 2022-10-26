@@ -4,7 +4,7 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { getDefaultProvider } from 'ethers'
 import { chain } from 'wagmi'
 import { AppProps } from 'next/app'
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider, DarkMode } from '@chakra-ui/react'
 
 
 const provider = getDefaultProvider(chain.goerli.id)
@@ -22,9 +22,11 @@ const client = createClient({
   provider,
 })
 
+const theme = DarkMode
+
 function MyApp({ Component, pageProps }: AppProps) {
   return <WagmiConfig client={client}>
-    <ChakraProvider>
+    <ChakraProvider >
       <Component {...pageProps} />
     </ChakraProvider>
   </WagmiConfig>
