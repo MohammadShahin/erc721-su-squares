@@ -32,7 +32,7 @@ export default function NFTGrid({ onClickCell, cells, selected, ...tableContaine
               return (
                 <Tr key={indexI} w="100%" p="1">
 
-                  {row.map((elem, indexJ) => {
+                  {row.map((elem) => {
                     return <Td
                       key={elem.tokenId}
                       border={(elem.tokenId === selected?.tokenId) ? "solid red 3px!" : "dashed black 3px"}
@@ -45,7 +45,7 @@ export default function NFTGrid({ onClickCell, cells, selected, ...tableContaine
                       <Box
                         h={'24px!'}
                         w={'24px!'}>
-                        <Image h='100%' w='100%' fill={'contain'} src={elem.owner ? elem.image : DEFAULT_IMAGE} alt=""></Image>
+                        <Image h='100%' w='100%' fill={'fill'} src={elem.owner ? elem.image : DEFAULT_IMAGE} alt=""></Image>
                       </Box>
                     </Td>
                   })}
