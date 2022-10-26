@@ -23,12 +23,20 @@ const client = createClient({
   provider,
 })
 
+const config: ThemeConfig = {
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+};
+
+const theme = extendTheme({ config });
+
+
 function MyApp({ Component, pageProps }: AppProps) {
-  return <WagmiConfig client={client}>
-    <ChakraProvider>
+  return <WagmiConfig client={client} >
+    <ChakraProvider theme={theme}>
       <Component {...pageProps} />
     </ChakraProvider>
-  </WagmiConfig>
+  </WagmiConfig >
 }
 
 export default MyApp

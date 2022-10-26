@@ -3,7 +3,7 @@ import React from 'react'
 import styles from '../styles/Home.module.css'
 import { useAccount, useConnect, useDisconnect, useContract, useSigner } from 'wagmi'
 // import { calculatorAbi } from '../src/abi'
-import { useToast, Button, Text, Flex, Box, Heading, Spinner } from '@chakra-ui/react'
+import { useToast, Button, Text, Flex, Box, Heading, Spinner, useColorMode } from '@chakra-ui/react'
 import { abi, address as contractAddress } from '../src/constants'
 import { NFTGrid } from '../src/components'
 import { SquareNFT } from '../src/types'
@@ -40,6 +40,7 @@ export default function Home() {
     return nftsLoading || contractDetailsLoading
   }, [nftsLoading, contractDetailsLoading])
   const toast = useToast()
+  const { setColorMode } = useColorMode()
 
   const handleRetrieveNfts = React.useCallback(async () => {
 
@@ -97,6 +98,7 @@ export default function Home() {
 
   React.useEffect(() => {
     disconnect()
+    setColorMode('dark')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
