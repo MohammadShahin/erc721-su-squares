@@ -3,11 +3,10 @@ import {
   Tbody,
   Tr,
   Td,
-  TableCaption,
   TableContainer,
   Image,
   TableContainerProps,
-  Box,
+  Center,
 } from "@chakra-ui/react";
 import React from "react";
 import { SquareNFT } from "../types";
@@ -35,6 +34,8 @@ export default function NFTGrid({ onClickCell, cells, selected, ...tableContaine
                   {row.map((elem) => {
                     return <Td
                       key={elem.tokenId}
+                      alignContent='center'
+                      alignItems='center'
                       border={(elem.tokenId === selected?.tokenId) ? "solid red 3px!" : "dashed black 3px"}
                       p='0'
                       onClick={() => onClickCell(elem)}
@@ -42,11 +43,12 @@ export default function NFTGrid({ onClickCell, cells, selected, ...tableContaine
                         border: 'solid #0070f3 3px'
                       }}
                     >
-                      <Box
+                      <Center
+                        m='auto'
                         h={'24px!'}
                         w={'24px!'}>
-                        <Image h='100%' w='100%' fill={'fill'} src={elem.owner ? elem.image : DEFAULT_IMAGE} alt=""></Image>
-                      </Box>
+                        <Image display='block' w='100%!' h='100%!' fill={'cover'} m='auto' src={elem.owner ? elem.image : DEFAULT_IMAGE} alt=""></Image>
+                      </Center>  
                     </Td>
                   })}
                 </Tr>
